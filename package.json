@@ -7,6 +7,7 @@
     "dev": "npx http-server . -p 8080",
     "build": "node scripts/build.js",
     "deploy": "node scripts/deploy.js",
+    "deploy-cloud": "node scripts/deploy-to-cloud.js",
     "test": "node scripts/test.js",
     "validate": "node scripts/validate.js"
   },

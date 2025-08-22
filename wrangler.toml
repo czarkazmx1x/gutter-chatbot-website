@@ -1,8 +1,8 @@
-# Gutter Chatbot Package - Cloudflare Configuration
+# Gutter Chatbot Package - Cloudflare Pages Configuration
 
-# Cloudflare Pages configuration
-name = "gutter-website"
+name = "gutter-chatbot-website"
 compatibility_date = "2025-08-22"
+pages_build_output_dir = "dist"
 
 [build]
 command = "npm run build"
