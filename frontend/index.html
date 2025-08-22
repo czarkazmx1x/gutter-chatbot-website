@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Gutter Services | Your Gutter Company</title>
+    
+    <!-- N8N Chatbot CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/style.css" rel="stylesheet" />
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Professional gutter installation, repair, and cleaning services. Free estimates, emergency service available.">
+    <meta name="keywords" content="gutter installation, gutter repair, gutter cleaning, gutters, downspouts, roofing">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="images/logo.png" alt="Your Gutter Company" class="logo">
+                <span class="company-name">Your Gutter Company</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="tel:+15551234567" class="phone-btn">📞 (555) 123-4567</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Professional Gutter Services</h1>
+            <p>Protect your home with our expert gutter installation, repair, and maintenance services.</p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn btn-primary">Free Estimate</a>
+                <a href="tel:+15551234567" class="btn btn-secondary">Call Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2>Our Services</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h3>🏠 Gutter Installation</h3>
+                    <p>Professional installation of seamless aluminum gutters with custom sizing and colors.</p>
+                    <ul>
+                        <li>5" and 6" seamless gutters</li>
+                        <li>Multiple color options</li>
+                        <li>Professional installation</li>
+                        <li>Lifetime warranty</li>
+                    </ul>
+                </div>
+                
+                <div class="service-card">
+                    <h3>🔧 Gutter Repair</h3>
+                    <p>Expert repair services to fix leaks, damage, and alignment issues.</p>
+                    <ul>
+                        <li>Leak repairs</li>
+                        <li>Downspout replacement</li>
+                        <li>Gutter realignment</li>
+                        <li>Fascia board repair</li>
+                    </ul>
+                </div>
+                
+                <div class="service-card">
+                    <h3>🧹 Gutter Cleaning</h3>
+                    <p>Thorough cleaning and maintenance to keep your gutters flowing properly.</p>
+                    <ul>
+                        <li>Debris removal</li>
+                        <li>Downspout clearing</li>
+                        <li>System inspection</li>
+                        <li>Minor repair identification</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Get Your Free Estimate</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <div class="contact-item">
+                        <strong>📞 Phone:</strong> (555) 123-4567
+                    </div>
+                    <div class="contact-item">
+                        <strong>📧 Email:</strong> info@yourgutterco.com
+                    </div>
+                    <div class="contact-item">
+                        <strong>🕐 Hours:</strong> Mon-Sat 8AM-6PM
+                    </div>
+                    <div class="contact-item">
+                        <strong>🚨 Emergency:</strong> 24/7 Available
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <form id="estimateForm">
+                        <input type="text" placeholder="Your Name" required>
+                        <input type="email" placeholder="Email Address" required>
+                        <input type="tel" placeholder="Phone Number" required>
+                        <input type="text" placeholder="Property Address" required>
+                        <select required>
+                            <option value="">Select Service Needed</option>
+                            <option value="installation">Gutter Installation</option>
+                            <option value="repair">Gutter Repair</option>
+                            <option value="cleaning">Gutter Cleaning</option>
+                            <option value="inspection">Inspection</option>
+                        </select>
+                        <textarea placeholder="Additional Details" rows="4"></textarea>
+                        <button type="submit" class="btn btn-primary">Request Free Estimate</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Your Gutter Company</h4>
+                    <p>Professional gutter services for residential and commercial properties.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li>Gutter Installation</li>
+                        <li>Gutter Repair</li>
+                        <li>Gutter Cleaning</li>
+                        <li>Emergency Service</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>📞 (555) 123-4567</p>
+                    <p>📧 info@yourgutterco.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Your Gutter Company. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- N8N Chatbot Integration with Session Memory -->
+    <script type="module">
+        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/chat.bundle.es.js';
+        
+        // Generate unique session ID for conversation memory
+        const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        console.log('Chatbot Session ID:', sessionId);
+        
+        // Override fetch to add sessionId to every message for N8N Window Buffer Memory
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            // Check if this is a request to our N8N webhook
+            if (options && options.method === 'POST' && url.includes('webhook')) {
+                try {
+                    const body = JSON.parse(options.body);
+                    
+                    // Add sessionId to the message payload for Window Buffer Memory
+                    const enhancedBody = {
+                        ...body,
+                        sessionId: sessionId,
+                        chatInput: body.message || body.chatInput // Fallback for your current setup
+                    };
+                    
+                    options.body = JSON.stringify(enhancedBody);
+                    console.log('Enhanced message with sessionId:', enhancedBody);
+                    
+                } catch (e) {
+                    console.warn('Failed to enhance message with sessionId:', e);
+                }
+            }
+            
+            return originalFetch.apply(this, arguments);
+        };
+        
+        // Initialize chatbot with configuration
+        createChat({
+            webhookUrl: 'YOUR_N8N_WEBHOOK_URL_HERE', // Replace with your actual webhook URL
+            chatWindowConfig: {
+                title: 'Gutter Expert Chat',
+                subtitle: 'Get instant help with your gutter needs',
+                welcomeMessage: 'Hi! How can I help with your gutters today? I can provide quotes, schedule service, or answer questions.',
+                position: 'bottom-right',
+                theme: {
+                    primaryColor: '#2563eb',
+                    textColor: '#374151',
+                    backgroundColor: '#ffffff'
+                }
+            },
+            messageConfig: {
+                showTimestamp: true,
+                allowFileUpload: false
+            }
+        });
+    </script>
+
+    <!-- Enhanced Chatbot Script -->
+    <script src="js/chatbot-enhanced.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+# Gutter Chatbot Package - Cloudflare Configuration
+
+# Cloudflare Pages configuration
+name = "gutter-website"
+compatibility_date = "2025-08-22"
+
+[build]
+command = "npm run build"
+publish = "dist"
+
+[build.environment]
+NODE_VERSION = "18"
+
+# Environment variables for production
+[env.production]
+NODE_ENV = "production"
+
+# Environment variables for preview
+[env.preview]
+NODE_ENV = "development"
+
+# Custom headers for security
+[[headers]]
+for = "/*"
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets
+[[headers]]
+for = "/css/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/js/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/images/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirects for SEO
+[[redirects]]
+from = "/gutter-installation"
+to = "/#services"
+status = 301
+
+[[redirects]]
+from = "/gutter-repair"
+to = "/#services"
+status = 301
+
+[[redirects]]
+from = "/gutter-cleaning"
+to = "/#services"
+status = 301

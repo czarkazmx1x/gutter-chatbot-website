@@ -1,0 +1,73 @@
+{
+  "name": "Gutter Chatbot Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gutter-chatbot",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "gutter-chatbot-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const userMessage = $input.first().json.body.message;\nconst timestamp = new Date().toISOString();\n\n// Extract user intent from message\nlet intent = 'general';\nlet response = '';\n\nconst message = userMessage.toLowerCase();\n\n// Lead qualification keywords\nif (message.includes('quote') || message.includes('estimate') || message.includes('price') || message.includes('cost')) {\n  intent = 'quote_request';\n  response = \"I'd be happy to help you get a quote! To provide an accurate estimate, I'll need some information:\\n\\n• What type of gutter service do you need? (installation, repair, cleaning)\\n• What's your property address?\\n• How many feet of gutters do you have (approximately)?\\n• When would you like the work completed?\\n\\nYou can also call us at (555) 123-4567 for immediate assistance!\";\n}\n// Service information\nelse if (message.includes('service') || message.includes('what do you do') || message.includes('gutter')) {\n  intent = 'service_info';\n  response = \"We provide comprehensive gutter services:\\n\\n🏠 **Gutter Installation**\\n• Seamless aluminum gutters\\n• Custom sizing and colors\\n• Professional installation\\n\\n🔧 **Gutter Repair**\\n• Leak repairs\\n• Downspout replacement\\n• Gutter realignment\\n\\n🧹 **Gutter Cleaning**\\n• Debris removal\\n• Downspout clearing\\n• Gutter inspection\\n\\n💰 **Free Estimates** - Call (555) 123-4567\\n\\nWhat specific service interests you?\";\n}\n// Emergency situations\nelse if (message.includes('emergency') || message.includes('urgent') || message.includes('leak') || message.includes('overflow')) {\n  intent = 'emergency';\n  response = \"🚨 **Emergency Gutter Service**\\n\\nFor urgent gutter issues, please call us immediately:\\n📞 **(555) 123-4567**\\n\\nWe offer 24/7 emergency response for:\\n• Severe leaks\\n• Gutter detachment\\n• Storm damage\\n• Water damage prevention\\n\\nOur emergency team can typically respond within 2-4 hours.\";\n}\n// Pricing questions\nelse if (message.includes('how much') || message.includes('pricing') || message.includes('rates')) {\n  intent = 'pricing';\n  response = \"**Typical Pricing Ranges:**\\n\\n🏠 **Gutter Installation:** $8-15 per linear foot\\n🔧 **Gutter Repair:** $150-400 per repair\\n🧹 **Gutter Cleaning:** $150-300 per cleaning\\n\\n*Prices vary based on:*\\n• Property size and height\\n• Gutter material and style\\n• Complexity of installation\\n• Local market conditions\\n\\n**Get an exact quote:** Call (555) 123-4567 or request a free estimate online!\";\n}\n// Contact and scheduling\nelse if (message.includes('schedule') || message.includes('appointment') || message.includes('when') || message.includes('available')) {\n  intent = 'scheduling';\n  response = \"**Schedule Your Gutter Service:**\\n\\n📅 **Available Days:** Monday - Saturday\\n🕐 **Hours:** 8:00 AM - 6:00 PM\\n\\n**Quick Scheduling Options:**\\n• Call: (555) 123-4567\\n• Text: (555) 123-4567\\n• Email: info@yourgutterco.com\\n\\n**Typical Timeline:**\\n• Free estimates: Same day\\n• Cleaning/Repairs: 1-3 days\\n• New installations: 1-2 weeks\\n\\nWhat works best for your schedule?\";\n}\n// Default response\nelse {\n  intent = 'general';\n  response = \"Hello! I'm here to help with all your gutter needs. 🏠\\n\\nI can assist you with:\\n• Free estimates and quotes\\n• Service information\\n• Scheduling appointments\\n• Emergency gutter issues\\n\\n**Popular Questions:**\\n• \\\"How much does gutter installation cost?\\\"\\n• \\\"Do you offer gutter cleaning?\\\"\\n• \\\"Can you fix a leaking gutter?\\\"\\n\\n**Need immediate help?** Call (555) 123-4567\\n\\nWhat can I help you with today?\";\n}\n\nreturn {\n  userMessage,\n  intent,\n  response,\n  timestamp,\n  leadData: {\n    hasContact: false,\n    serviceType: intent === 'quote_request' ? 'quote' : null,\n    urgency: intent === 'emergency' ? 'high' : 'normal'\n  }\n};"
+      },
+      "id": "process-message",
+      "name": "Process Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"message\": $json.response, \"timestamp\": $json.timestamp } }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook", 
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Message": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main", 
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-22T12:00:00.000Z",
+  "updatedAt": "2025-08-22T12:00:00.000Z",
+  "settings": {},
+  "staticData": null,
+  "tags": ["chatbot", "gutter", "customer-service"],
+  "triggerCount": 0,
+  "versionId": "1"
+}

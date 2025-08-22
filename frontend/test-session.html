@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Test - Session Memory</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .debug-panel { background: #f8f9fa; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        #debugOutput { background: #343a40; color: #fff; padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🤖 Gutter Chatbot - Session Memory Test</h1>
+        
+        <div class="status success">
+            ✅ Enhanced chatbot script loaded with session memory
+        </div>
+        
+        <div class="status info">
+            📝 This test page verifies that sessionId is being sent to your N8N Window Buffer Memory
+        </div>
+        
+        <div class="debug-panel">
+            <h3>Debug Controls</h3>
+            <button onclick="showSessionInfo()">Show Session Info</button>
+            <button onclick="testWebhook()">Test Webhook Call</button>
+            <button onclick="resetSession()">Reset Session</button>
+            <button onclick="clearDebug()">Clear Debug</button>
+        </div>
+        
+        <div class="debug-panel">
+            <h3>Debug Output</h3>
+            <div id="debugOutput">Waiting for debug info...</div>
+        </div>
+        
+        <div class="debug-panel">
+            <h3>Instructions</h3>
+            <ol>
+                <li><strong>Replace YOUR_N8N_WEBHOOK_URL_HERE</strong> in index.html with your actual webhook URL</li>
+                <li><strong>Set Window Buffer Memory Key</strong> in N8N to: <code>{{ $json.sessionId }}</code></li>
+                <li><strong>Test the chatbot</strong> - it should remember the conversation now</li>
+                <li><strong>Check N8N execution logs</strong> to see the sessionId and memory working</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- N8N Chatbot CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/style.css" rel="stylesheet" />
+    
+    <!-- Enhanced Chatbot Script -->
+    <script src="js/chatbot-enhanced.js"></script>
+    
+    <!-- N8N Chatbot Integration with Session Memory -->
+    <script type="module">
+        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/chat.bundle.es.js';
+        
+        createChat({
+            webhookUrl: 'YOUR_N8N_WEBHOOK_URL_HERE', // Replace with your actual webhook URL
+            chatWindowConfig: {
+                title: 'Gutter Expert Chat - TEST',
+                subtitle: 'Testing session memory',
+                welcomeMessage: 'Hi! This is a test of the session memory. Say your name and I should remember it.',
+                position: 'bottom-right',
+                theme: {
+                    primaryColor: '#2563eb',
+                    textColor: '#374151',
+                    backgroundColor: '#ffffff'
+                }
+            }
+        });
+    </script>
+    
+    <script>
+        function showSessionInfo() {
+            const sessionId = sessionStorage.getItem('gutterChatSessionId');
+            const output = document.getElementById('debugOutput');
+            output.textContent = `Session ID: ${sessionId}\nTimestamp: ${new Date().toISOString()}\nStatus: Active`;
+        }
+        
+        function testWebhook() {
+            const sessionId = sessionStorage.getItem('gutterChatSessionId');
+            const testMessage = {
+                message: "Test message for session memory",
+                sessionId: sessionId,
+                chatInput: "Test message for session memory",
+                timestamp: new Date().toISOString()
+            };
+            
+            const output = document.getElementById('debugOutput');
+            output.textContent = `Test Message Payload:\n${JSON.stringify(testMessage, null, 2)}`;
+        }
+        
+        function resetSession() {
+            sessionStorage.removeItem('gutterChatSessionId');
+            location.reload();
+        }
+        
+        function clearDebug() {
+            document.getElementById('debugOutput').textContent = 'Debug cleared...';
+        }
+        
+        // Auto-show session info on load
+        setTimeout(showSessionInfo, 1000);
+    </script>
+</body>
+</html>

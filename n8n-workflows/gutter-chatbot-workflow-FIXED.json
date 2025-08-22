@@ -1,0 +1,73 @@
+{
+  "name": "Gutter Chatbot Workflow - Fixed",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gutter-chatbot",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "gutter-chatbot-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get input data\nconst input = $input.first().json;\nconst userMessage = input.body?.message || input.message || '';\nconst conversationHistory = input.body?.conversationHistory || [];\nconst sessionId = input.body?.sessionId || 'session_' + Date.now();\n\n// Initialize conversation state\nlet conversationState = {\n  customerName: null,\n  customerEmail: null,\n  serviceNeeded: null,\n  step: 'greeting'\n};\n\n// Parse existing state from conversation history\nif (conversationHistory.length > 0) {\n  const lastBotMessage = conversationHistory.filter(msg => msg.role === 'assistant').pop();\n  const allUserMessages = conversationHistory.filter(msg => msg.role === 'user');\n  \n  // Extract customer name from previous interactions\n  for (const msg of allUserMessages) {\n    const message = msg.content.toLowerCase();\n    // Look for name patterns (simple heuristic)\n    if (message.match(/^[a-zA-Z]{2,20}$/) && !['yes', 'no', 'ok', 'sure', 'hello', 'hi'].includes(message)) {\n      conversationState.customerName = msg.content.trim();\n      break;\n    }\n  }\n  \n  // Extract email if provided\n  for (const msg of allUserMessages) {\n    const emailMatch = msg.content.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);\n    if (emailMatch) {\n      conversationState.customerEmail = emailMatch[0];\n      break;\n    }\n  }\n  \n  // Determine current step based on what we have\n  if (conversationState.customerName && conversationState.customerEmail) {\n    conversationState.step = 'service_discussion';\n  } else if (conversationState.customerName) {\n    conversationState.step = 'email_collection';\n  } else {\n    conversationState.step = 'name_collection';\n  }\n}\n\n// Process current message\nconst message = userMessage.toLowerCase();\nlet response = '';\nlet intent = 'general';\n\n// Service detection\nif (message.includes('clean') || message.includes('cleaning')) {\n  conversationState.serviceNeeded = 'cleaning';\n  intent = 'service_request';\n} else if (message.includes('install') || message.includes('installation') || message.includes('new gutter')) {\n  conversationState.serviceNeeded = 'installation';\n  intent = 'service_request';\n} else if (message.includes('repair') || message.includes('fix') || message.includes('leak')) {\n  conversationState.serviceNeeded = 'repair';\n  intent = 'service_request';\n} else if (message.includes('quote') || message.includes('estimate') || message.includes('price') || message.includes('cost')) {\n  intent = 'quote_request';\n} else if (message.includes('emergency') || message.includes('urgent')) {\n  intent = 'emergency';\n}\n\n// Email detection\nconst emailMatch = userMessage.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);\nif (emailMatch && !conversationState.customerEmail) {\n  conversationState.customerEmail = emailMatch[0];\n  conversationState.step = 'service_discussion';\n}\n\n// Name detection (if it looks like a name and we don't have one)\nif (!conversationState.customerName && userMessage.match(/^[a-zA-Z]{2,20}$/) && \n    !['yes', 'no', 'ok', 'sure', 'hello', 'hi', 'hey'].includes(message)) {\n  conversationState.customerName = userMessage.trim();\n  conversationState.step = 'email_collection';\n}\n\n// Generate response based on conversation state and intent\nif (intent === 'emergency') {\n  response = `🚨 **Emergency Gutter Service**\\n\\nI understand this is urgent! For immediate emergency service, please call us right now:\\n\\n📞 **(770) 555-0123**\\n\\nOur emergency team responds within 2 hours for:\\n• Severe leaks causing water damage\\n• Gutters pulling away from house\\n• Storm damage\\n\\nI'm also here to help coordinate follow-up service. What's the specific emergency you're experiencing?`;\n} else if (conversationState.step === 'greeting' || (!conversationState.customerName && conversationHistory.length === 0)) {\n  response = \"Hi! I'm Sarah from Atlanta Gutter Guard Pros. I'm here to help protect your home. What's your name?\";\n  conversationState.step = 'name_collection';\n} else if (conversationState.step === 'name_collection' && conversationState.customerName) {\n  response = `Thanks, ${conversationState.customerName}! To send you information and follow up, could I get your email address?`;\n  conversationState.step = 'email_collection';\n} else if (conversationState.step === 'email_collection' && !conversationState.customerEmail && message !== 'no') {\n  response = `${conversationState.customerName}, I'd love to send you service information and follow up with you. Could you share your email address?`;\n} else if (message === 'no' && conversationState.step === 'email_collection') {\n  response = `No problem, ${conversationState.customerName}! I can still help you today. What gutter service do you need help with?`;\n  conversationState.step = 'service_discussion';\n} else if (conversationState.customerEmail && conversationState.step === 'email_collection') {\n  response = `Perfect, ${conversationState.customerName}! I have your email as ${conversationState.customerEmail}. How can I help you today?`;\n  conversationState.step = 'service_discussion';\n} else if (conversationState.step === 'service_discussion' || conversationState.serviceNeeded) {\n  // Handle service-specific responses\n  if (conversationState.serviceNeeded === 'cleaning' || intent === 'service_request') {\n    response = `Great! ${conversationState.customerName ? conversationState.customerName + ', ' : ''}I can help you with gutter cleaning. Here's what our service includes:\\n\\n🧹 **Professional Gutter Cleaning - $150-300**\\n• Complete debris removal\\n• Downspout clearing\\n• System inspection\\n• Minor leak detection\\n\\n📍 **Service Area:** Greater Atlanta area\\n⏰ **Scheduling:** Usually within 1-3 days\\n🛡️ **Warranty:** 30-day service guarantee\\n\\nWould you like to schedule a service appointment or get a specific quote for your property?`;\n  } else if (intent === 'quote_request') {\n    response = `I'd be happy to provide a quote${conversationState.customerName ? ', ' + conversationState.customerName : ''}! To give you an accurate estimate, I need a few details:\\n\\n• What's your property address?\\n• What type of service do you need? (cleaning, repair, installation)\\n• How many linear feet of gutters (approximately)?\\n• Any specific issues you've noticed?\\n\\nYou can also call (770) 555-0123 for immediate phone quotes!`;\n  } else {\n    response = `${conversationState.customerName ? conversationState.customerName + ', ' : ''}I can help you with all your gutter needs! We provide:\\n\\n🏠 **Gutter Installation** - $8-15/ft\\n🔧 **Gutter Repair** - $150-400\\n🧹 **Gutter Cleaning** - $150-300\\n\\n**Service Info:** $8-12/ft installed, Greater Atlanta area\\n\\nWhat specific gutter service interests you most?`;\n  }\n} else {\n  // Default response\n  response = `Hello! I'm Sarah from Atlanta Gutter Guard Pros. I'm here to help with all your gutter needs. What can I assist you with today?`;\n}\n\n// Prepare output\nreturn {\n  userMessage,\n  response,\n  conversationState,\n  sessionId,\n  timestamp: new Date().toISOString(),\n  intent,\n  leadData: {\n    customerName: conversationState.customerName,\n    customerEmail: conversationState.customerEmail,\n    serviceNeeded: conversationState.serviceNeeded,\n    step: conversationState.step,\n    hasContact: !!(conversationState.customerName || conversationState.customerEmail)\n  }\n};"
+      },
+      "id": "process-message",
+      "name": "Process Message with Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"message\": $json.response, \"timestamp\": $json.timestamp, \"sessionId\": $json.sessionId, \"conversationState\": $json.conversationState } }}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook", 
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Message with Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Message with Context": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main", 
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-22T12:00:00.000Z",
+  "updatedAt": "2025-08-22T12:00:00.000Z",
+  "settings": {},
+  "staticData": null,
+  "tags": ["chatbot", "gutter", "customer-service", "fixed"],
+  "triggerCount": 0,
+  "versionId": "2"
+}
